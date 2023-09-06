@@ -1,4 +1,5 @@
 # Project exclude paths
+.idea
 /target/
 /src/main/resources/application-pro.yml
 /src/main/java/com/chq/util/impl/QQEmailSender.java
