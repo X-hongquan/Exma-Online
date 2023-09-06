@@ -17,14 +17,20 @@ Vue3、ElementPlus、Piana
 
 
 
-#### 安装教程
+#### 项目展示
 
 ![img.png](img.png)
+![img_2.png](img_2.png)
+![img_3.png](img_3.png)
 ![img_1.png](img_1.png)
+
+##### 后台
+![img_4.png](img_4.png)
+
 
 #### 未解决问题
 
 
-1.  目前只支持特定格式的Word文档试卷,
+1.  目前只支持特定格式的Word文档试卷,word文档暂不支持图片解析
 2.  作弊行为无法监测
 3.  只能用邮箱代替手机验证码
