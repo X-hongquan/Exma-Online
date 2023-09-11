@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -69,7 +70,7 @@ public class UserController {
 
 
     @PostMapping("/rLogin")
-    private R adminLogin(@RequestBody LoginDto loginDto) throws AuthException {
+    private R adminLogin(@Validated @RequestBody LoginDto loginDto) throws AuthException {
         return userService.adminLogin(loginDto);
     }
 
@@ -79,7 +80,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public R login(@RequestBody LoginDto loginDto) throws AuthException {
+    public R login(@Validated @RequestBody LoginDto loginDto) throws AuthException {
         return userService.login(loginDto);
     }
 
@@ -100,7 +101,7 @@ public class UserController {
     }
 
     @PutMapping("/pwd")
-    public R updatePwd(@RequestBody PasswordDto passwordDto) throws AuthException {
+    public R updatePwd(@Validated @RequestBody PasswordDto passwordDto) throws AuthException {
         return userService.updatePwd(passwordDto);
     }
 
@@ -123,7 +124,6 @@ public class UserController {
             return eo;
         }).collect(Collectors.toList());
         EasyExcel.write(response.getOutputStream(), UserEo.class).sheet("模板").doWrite(collect);
-
     }
 
 }

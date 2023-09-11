@@ -9,8 +9,11 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.validator.constraints.Length;
 
 /**
  * <p>
@@ -31,6 +34,7 @@ public class User implements Serializable {
 
     private String sno;
 
+    @Length(min = 6,max = 15,message = "密码长度6~15位")
     private String password;
 
     private String salt;
@@ -38,6 +42,7 @@ public class User implements Serializable {
 
     private String sex;
 
+    @Pattern(regexp = "^1[3~9]\\d{9}$",message = "手机格式不对")
     private String phone;
 
     private String name;
@@ -48,7 +53,7 @@ public class User implements Serializable {
 
     private Integer classId;
 
-
+    @Email(message = "邮箱格式不对")
     private String email;
 
     /**

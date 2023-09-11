@@ -8,7 +8,6 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.read.listener.PageReadListener;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.injector.methods.UpdateById;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chq.common.R;
 import com.chq.controller.advice.exception.AuthException;
@@ -24,7 +23,6 @@ import com.chq.pojo.eo.UserEo;
 import com.chq.pojo.vo.UserVo;
 import com.chq.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.chq.util.RegexUtils;
 import com.chq.util.Sender;
 import com.chq.util.UserHolder;
 import jakarta.annotation.Resource;
@@ -118,11 +116,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public R adminLogin(LoginDto loginDto) throws AuthException {
-        String phone = loginDto.getPhone();
-        if (!RegexUtils.phoneRegex(phone)) {
-            throw new AuthException("手机格式不对");
-        }
 
+        String phone = loginDto.getPhone();
         User one = getOne(new LambdaQueryWrapper<User>().eq(User::getPhone, phone));
         if (one==null) {
             throw new AuthException("账号或密码错误");
@@ -147,9 +142,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     public R login(LoginDto loginDto) throws AuthException {
         String phone = loginDto.getPhone();
-        if (!RegexUtils.phoneRegex(phone)) {
-            throw new AuthException("手机格式不对");
-        }
         User one = getOne(new LambdaQueryWrapper<User>().eq(User::getPhone, phone));
         if (one==null) {
             throw new AuthException("账号或密码错误");
