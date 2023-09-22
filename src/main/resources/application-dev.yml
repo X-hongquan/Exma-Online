@@ -25,7 +25,6 @@ spring:
           max-idle: 10
           min-idle: 0
       timeout: 10s
-
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
@@ -36,3 +35,4 @@ minio:
   bucket:
     test: test
     answer: answer
+sender: qqEmail

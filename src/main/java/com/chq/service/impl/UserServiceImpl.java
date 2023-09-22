@@ -29,6 +29,8 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -63,9 +65,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
    private ScoreMapper scoreMapper;
 
    @Autowired
+   @Qualifier(value = "${sender}")
    private Sender sender;
-
-
 
     @Override
     public R add(User user) {
@@ -116,7 +117,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public R adminLogin(LoginDto loginDto) throws AuthException {
-
         String phone = loginDto.getPhone();
         User one = getOne(new LambdaQueryWrapper<User>().eq(User::getPhone, phone));
         if (one==null) {
@@ -129,7 +129,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         String token = UUID.randomUUID().toString(true);
         UserDto userDto = new UserDto();
         BeanUtils.copyProperties(one,userDto);
-        stringRedisTemplate.opsForValue().set("login:"+token,JSONUtil.toJsonStr(userDto));
+        stringRedisTemplate.opsForValue().set(LOGIN_KEY+token,JSONUtil.toJsonStr(userDto));
         return R.ok(token);
     }
 
@@ -141,6 +141,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public R login(LoginDto loginDto) throws AuthException {
+
         String phone = loginDto.getPhone();
         User one = getOne(new LambdaQueryWrapper<User>().eq(User::getPhone, phone));
         if (one==null) {
