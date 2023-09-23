@@ -1,3 +1,4 @@
+
 server:
   port: 8080
   servlet:
@@ -35,4 +36,3 @@ minio:
   bucket:
     test: test
     answer: answer
-sender: qqEmail

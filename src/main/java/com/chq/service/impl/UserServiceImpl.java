@@ -25,7 +25,12 @@ import com.chq.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chq.util.Sender;
 import com.chq.util.UserHolder;
+import io.minio.GetObjectArgs;
+import io.minio.GetObjectResponse;
+import io.minio.MinioClient;
 import jakarta.annotation.Resource;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +41,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -65,7 +71,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
    private ScoreMapper scoreMapper;
 
    @Autowired
-   @Qualifier(value = "${sender}")
+   private MinioClient minioClient;
+
+   @Autowired
+   @Qualifier(value = "qq")
    private Sender sender;
 
     @Override
@@ -157,11 +166,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if (user==null) {
             throw new AuthException("账号或密码错误");
         }
+        String token = getToken(one,LOGIN_TTL);
+        return R.ok(token);
+    }
+
+    private String getToken(User one,Long ttl) {
         String token = UUID.randomUUID().toString(true);
         UserDto userDto = new UserDto();
         BeanUtils.copyProperties(one,userDto);
-        stringRedisTemplate.opsForValue().set(LOGIN_KEY+token,JSONUtil.toJsonStr(userDto),LOGIN_TTL,TimeUnit.HOURS);
-        return R.ok(token);
+        stringRedisTemplate.opsForValue().set(LOGIN_KEY+token,JSONUtil.toJsonStr(userDto),ttl,TimeUnit.HOURS);
+        return token;
     }
 
     @Override
@@ -231,5 +245,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             return R.ok();
         }
         return R.fail("服务器异常");
+    }
+
+    @Override
+    public R tour() {
+        User user = getById(9);
+        String token = getToken(user,TOUR_TTL);
+        return R.ok(token);
+    }
+
+    @Override
+    public void getUse(HttpServletResponse response) {
+
+        try (ServletOutputStream outputStream = response.getOutputStream()){
+            GetObjectArgs docx = GetObjectArgs.builder().bucket("test").object("用户手册.docx").build();
+            GetObjectResponse res= minioClient.getObject(docx);
+            long l = res.transferTo(outputStream);
+            byte[] bytes = new byte[(int) l];
+            outputStream.write(bytes);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

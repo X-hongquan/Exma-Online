@@ -34,7 +34,6 @@ public class ExamVo {
 
     private String name;
 
-
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 }

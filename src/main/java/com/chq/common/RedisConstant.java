@@ -7,5 +7,6 @@ public interface RedisConstant {
 
     Long CODE_TTL=5L;
 
+    Long TOUR_TTL=1L;
     Long LOGIN_TTL=12L;
 }

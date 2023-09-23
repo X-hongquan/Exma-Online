@@ -8,6 +8,7 @@ import com.chq.pojo.dto.LoginDto;
 import com.chq.pojo.dto.PasswordDto;
 import com.chq.pojo.dto.UserDto;
 import com.chq.pojo.vo.UserVo;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -48,4 +49,8 @@ public interface IUserService extends IService<User> {
     R updatePwd(PasswordDto passwordDto) throws AuthException;
 
     R sendCode();
+
+    R tour();
+
+    void getUse(HttpServletResponse response);
 }

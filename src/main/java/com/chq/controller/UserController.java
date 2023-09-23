@@ -13,6 +13,7 @@ import com.chq.pojo.eo.UserEo;
 import com.chq.pojo.vo.UserVo;
 import com.chq.service.IUserService;
 
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.BeanUtils;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.List;
@@ -84,6 +86,12 @@ public class UserController {
         return userService.login(loginDto);
     }
 
+    @GetMapping("/tour")
+    public R tour() {
+        return userService.tour();
+
+    }
+
     @GetMapping("/logout")
     public R logout(HttpServletRequest request) {
         String token = request.getHeader("authorization");
@@ -111,8 +119,7 @@ public class UserController {
     }
 
 
-
-    @GetMapping("download")
+    @GetMapping("/download")
     public void download(HttpServletResponse response) throws IOException {
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("UTF-8");
@@ -124,6 +131,11 @@ public class UserController {
             return eo;
         }).collect(Collectors.toList());
         EasyExcel.write(response.getOutputStream(), UserEo.class).sheet("模板").doWrite(collect);
+    }
+
+    @GetMapping("/use")
+    public void getUse(HttpServletResponse response) {
+         userService.getUse(response);
     }
 
 }
