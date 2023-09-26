@@ -125,7 +125,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public R adminLogin(LoginDto loginDto) throws AuthException {
+    public R adminLogin(LoginDto loginDto)  {
         String phone = loginDto.getPhone();
         User one = getOne(new LambdaQueryWrapper<User>().eq(User::getPhone, phone));
         if (one==null) {
@@ -149,7 +149,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public R login(LoginDto loginDto) throws AuthException {
+    public R login(LoginDto loginDto) {
 
         String phone = loginDto.getPhone();
         User one = getOne(new LambdaQueryWrapper<User>().eq(User::getPhone, phone));
@@ -222,7 +222,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public R updatePwd(PasswordDto passwordDto) throws AuthException {
+    public R updatePwd(PasswordDto passwordDto) {
         UserDto user = UserHolder.getUser();
         if (!passwordDto.getCode().equals(stringRedisTemplate.opsForValue().get(AUTH_CODE+user.getId())))
             throw new AuthException("验证码出错");
@@ -260,9 +260,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         try (ServletOutputStream outputStream = response.getOutputStream()){
             GetObjectArgs docx = GetObjectArgs.builder().bucket("test").object("用户手册.docx").build();
             GetObjectResponse res= minioClient.getObject(docx);
-            long l = res.transferTo(outputStream);
-            byte[] bytes = new byte[(int) l];
-            outputStream.write(bytes);
+            res.transferTo(outputStream);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

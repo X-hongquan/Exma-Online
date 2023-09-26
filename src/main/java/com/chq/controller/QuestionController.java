@@ -31,12 +31,12 @@ public class QuestionController {
 
 
     @GetMapping("/one")
-    public R<List<Question>> getByTestId(String testId) {
+    public R<List<Question>> getByTestId(Integer testId) {
         return questionService.getByTestId(testId);
     }
 
     @GetMapping("/result")
-    public R<String> getResult(String testId) {
+    public R<String> getResult(Integer testId) {
         return questionService.getResult(testId);
     }
 

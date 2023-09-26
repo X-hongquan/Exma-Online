@@ -28,7 +28,15 @@ public class Question implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    private String testId;
+    private Integer testId;
+
+    private Integer courseId;
+
+    //1.easy,2.medium,3.difficult
+    private Integer degree;
+
+    //分值
+    private Integer grade;
 
     private String content;
 
@@ -49,6 +57,10 @@ public class Question implements Serializable {
     private String result;
 
     private Integer typeId;
+
+
+
+
 
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;

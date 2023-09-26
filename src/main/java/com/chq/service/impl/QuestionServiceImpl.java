@@ -1,7 +1,7 @@
 package com.chq.service.impl;
 
-import com.chq.common.QuestionType;
 import com.chq.common.R;
+import com.chq.common.Type;
 import com.chq.pojo.Question;
 import com.chq.mapper.QuestionMapper;
 import com.chq.service.IQuestionService;
@@ -22,20 +22,20 @@ import java.util.List;
 public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> implements IQuestionService {
 
     @Override
-    public R<List<Question>> getByTestId(String testId) {
+    public R<List<Question>> getByTestId(Integer testId) {
         List<Question> list = lambdaQuery().eq(Question::getTestId, testId).orderByAsc(Question::getSort).list();
-        Long count = lambdaQuery().eq(Question::getTestId, testId).le(Question::getTypeId, QuestionType.JUDGMENT.ordinal()).count();
+        Long count = lambdaQuery().eq(Question::getTestId, testId).le(Question::getTypeId, Type.JUDGE.getKey()).count();
         return R.ok(list,count);
     }
 
     @Override
-    public R<String> getResult(String testId) {
+    public R<String> getResult(Integer testId) {
         String s = RadioList(testId);
         return R.ok(s);
     }
 
-    public String RadioList(String testId) {
-        List<Question> list = lambdaQuery().eq(Question::getTestId, testId).le(Question::getTypeId, QuestionType.JUDGMENT.ordinal()).orderByAsc(Question::getSort).list();
+    public String RadioList(Integer testId) {
+        List<Question> list = lambdaQuery().eq(Question::getTestId, testId).le(Question::getTypeId, Type.JUDGE.getKey()).orderByAsc(Question::getSort).list();
         StringBuilder builder = new StringBuilder();
         for (Question question : list) {
             builder.append(question.getResult());

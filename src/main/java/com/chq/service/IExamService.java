@@ -25,7 +25,7 @@ public interface IExamService extends IService<Exam> {
 
     R<ExamVo> get(Integer examId);
 
-    R del(Integer examId) throws AuthException;
+    R del(Integer examId) ;
 
     R begin(Integer id);
 }

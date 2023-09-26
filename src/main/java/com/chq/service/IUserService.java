@@ -34,11 +34,11 @@ public interface IUserService extends IService<User> {
 
     R<List<UserVo>> getList(Integer currentPage);
 
-    R adminLogin(LoginDto loginDto) throws AuthException;
+    R adminLogin(LoginDto loginDto) ;
 
     R logout(String token);
 
-    R login(LoginDto loginDto) throws AuthException;
+    R login(LoginDto loginDto) ;
 
     R getMe();
 
@@ -46,7 +46,7 @@ public interface IUserService extends IService<User> {
 
     R excelAdd(MultipartFile file) throws IOException;
 
-    R updatePwd(PasswordDto passwordDto) throws AuthException;
+    R updatePwd(PasswordDto passwordDto) ;
 
     R sendCode();
 

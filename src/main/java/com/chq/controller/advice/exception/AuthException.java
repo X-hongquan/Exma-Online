@@ -1,6 +1,6 @@
 package com.chq.controller.advice.exception;
 
-public class AuthException extends Exception{
+public class AuthException extends RuntimeException{
 
     private String message;
 

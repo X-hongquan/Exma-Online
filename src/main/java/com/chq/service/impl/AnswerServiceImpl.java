@@ -2,32 +2,28 @@ package com.chq.service.impl;
 
 import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.chq.common.QuestionType;
 import com.chq.common.R;
+import com.chq.common.Type;
 import com.chq.mapper.*;
 import com.chq.pojo.*;
 import com.chq.pojo.dto.AnswerDto;
-import com.chq.pojo.dto.MsgDto;
+
 import com.chq.service.IAnswerService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.chq.util.Sender;
+
 import com.chq.util.UserHolder;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
-import io.minio.errors.*;
+
 import jakarta.annotation.Resource;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -143,11 +139,11 @@ public class AnswerServiceImpl extends ServiceImpl<AnswerMapper, Answer> impleme
         String testId = exam.getTestId();
         List<Question> questions = questionMapper.selectList(new LambdaQueryWrapper<Question>()
                 .eq(Question::getTestId, testId)
-                .le(Question::getTypeId, QuestionType.JUDGMENT.ordinal())
+                .le(Question::getTypeId, Type.JUDGE.getKey())
                 .orderByAsc(Question::getSort));
         for (Question question : questions) {
             String result = question.getResult();
-            if (question.getTypeId()==QuestionType.CHOICE.ordinal()) {
+            if (question.getTypeId()==Type.SELECT.getKey()) {
                 char c = charArray[i++];
                 if (question.getResult().equals(String.valueOf(c)))
                     radioScore+=3;

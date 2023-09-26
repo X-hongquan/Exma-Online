@@ -7,11 +7,8 @@ import com.chq.service.ITestService;
 import io.minio.PutObjectArgs;
 import io.minio.errors.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -42,6 +39,11 @@ public class TestController {
         String contentType = file.getContentType();
         String originalFilename = file.getOriginalFilename();
         return testService.upload(bytes,contentType,originalFilename);
+    }
+
+    @GetMapping("/list/id")
+    public R list() {
+        return testService.getList();
     }
 }
 

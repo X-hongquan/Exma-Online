@@ -16,7 +16,7 @@ import java.util.List;
  */
 public interface IQuestionService extends IService<Question> {
 
-    R<List<Question>> getByTestId(String testId);
+    R<List<Question>> getByTestId(Integer testId);
 
-    R<String> getResult(String testId);
+    R<String> getResult(Integer testId);
 }

@@ -11,5 +11,5 @@ public class ExamDto {
     private Integer classId;
     private String courseName;
     private String testId;
-    private List<LocalDateTime> timeArray;
+    private List<String> timeArray;
 }

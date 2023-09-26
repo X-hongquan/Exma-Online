@@ -6,10 +6,13 @@ import com.chq.pojo.Course;
 import com.chq.mapper.CourseMapper;
 import com.chq.service.ICourseService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.chq.cache.CachePool.COURSE_CACHE;
 
 /**
  * <p>
@@ -22,6 +25,17 @@ import java.util.stream.Collectors;
 @Service
 public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> implements ICourseService {
 
+
+    @PostConstruct
+    public void putMap() {
+        List<Course> list = list();
+        for (Course course : list) {
+            COURSE_CACHE.put(course.getCourseName(),course.getId());
+        }
+    }
+
+
+
     @Override
     public R getList() {
         return R.ok(list());
@@ -33,6 +47,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         Course one = getOne(new LambdaQueryWrapper<Course>().eq(Course::getCourseName, courseName));
         if (one!=null) return R.fail("该课程已经存在");
         save(new Course().setCourseName(courseName));
+        putMap();
         return R.ok();
     }
 

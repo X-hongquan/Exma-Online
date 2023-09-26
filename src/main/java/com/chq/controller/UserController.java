@@ -61,7 +61,7 @@ public class UserController {
     }
 
     @PutMapping
-    private R up(@RequestBody User user) {
+    private R up(@Validated @RequestBody User user) {
         return userService.up(user);
     }
 
@@ -72,7 +72,7 @@ public class UserController {
 
 
     @PostMapping("/rLogin")
-    private R adminLogin(@Validated @RequestBody LoginDto loginDto) throws AuthException {
+    private R adminLogin(@Validated @RequestBody LoginDto loginDto) {
         return userService.adminLogin(loginDto);
     }
 
@@ -82,7 +82,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public R login(@Validated @RequestBody LoginDto loginDto) throws AuthException {
+    public R login(@Validated @RequestBody LoginDto loginDto) {
         return userService.login(loginDto);
     }
 
@@ -109,7 +109,7 @@ public class UserController {
     }
 
     @PutMapping("/pwd")
-    public R updatePwd(@Validated @RequestBody PasswordDto passwordDto) throws AuthException {
+    public R updatePwd(@Validated @RequestBody PasswordDto passwordDto)  {
         return userService.updatePwd(passwordDto);
     }
 

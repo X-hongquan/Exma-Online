@@ -18,7 +18,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,10 +50,9 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements IE
     public R add(ExamDto dto) {
         Exam exam = new Exam();
         BeanUtils.copyProperties(dto,exam);
-        exam.setBeginTime(dto.getTimeArray().get(0));
+        exam.setBeginTime( LocalDateTime.ofInstant(Instant.parse(dto.getTimeArray().get(0)), ZoneOffset.UTC));
         exam.setUserId(UserHolder.getUser().getId());
-        exam.setEndTime(dto.getTimeArray().get(1));
-        exam.setId(UserHolder.getUser().getId());
+        exam.setEndTime(LocalDateTime.ofInstant(Instant.parse(dto.getTimeArray().get(1)), ZoneOffset.UTC));
         save(exam);
         return R.ok();
     }
@@ -104,7 +106,7 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements IE
     }
 
     @Override
-    public R del(Integer examId) throws AuthException {
+    public R del(Integer examId)  {
         if (!UserHolder.getUser().getId().equals(getById(examId).getUserId())) throw new AuthException("权限不够");
         removeById(examId);
         return R.ok();

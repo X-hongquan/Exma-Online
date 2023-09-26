@@ -24,4 +24,6 @@ public interface ITestService extends IService<Test> {
 //    R upload(MultipartFile file, String contentType, String originalFilename) throws IOException;
 
     R upload(byte[] bytes, String contentType, String originalFilename) throws IOException;
+
+    R getList();
 }

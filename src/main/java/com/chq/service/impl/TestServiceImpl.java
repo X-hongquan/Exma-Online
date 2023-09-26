@@ -1,9 +1,10 @@
 package com.chq.service.impl;
 
-import cn.hutool.core.lang.UUID;
+
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.DigestUtil;
-import com.chq.common.QuestionType;
 import com.chq.common.R;
+import com.chq.common.Type;
 import com.chq.mapper.QuestionMapper;
 import com.chq.pojo.Question;
 import com.chq.pojo.Test;
@@ -17,11 +18,13 @@ import io.minio.PutObjectArgs;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -29,6 +32,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+
+import static com.chq.cache.CachePool.COURSE_CACHE;
 
 /**
  * <p>
@@ -79,66 +85,69 @@ public class TestServiceImpl extends ServiceImpl<TestMapper, Test> implements IT
 
 
     @Override
+    @Transactional
     public R upload(byte[] bytes, String contentType, String originalFilename) throws IOException {
         String s = DigestUtil.md5Hex(bytes);
         String tail = originalFilename.substring(originalFilename.lastIndexOf("."));
         String fileName=s+tail;
-        ByteArrayInputStream bs=null;
-        try {
-            bs = new ByteArrayInputStream(bytes);
+        try (ByteArrayInputStream bs = new ByteArrayInputStream(bytes)) {
             PutObjectArgs putObjectArgs = PutObjectArgs.builder().object(fileName)
                     .contentType(contentType).stream(bs, bytes.length, -1)
                     .bucket(test)
                     .build();
             minioClient.putObject(putObjectArgs);
-            log.info("上传成功");
         } catch (Exception e) {
-            log.error("上传失败,{}", e.getMessage());
-            return R.fail("上传失败");
-        } finally {
-            try {
-                bs.close();
-            } catch (IOException e) {
-                log.error("流关闭错误,{}",e.getMessage());
-            }
+            throw new RuntimeException("上传失败");
         }
-        String id = add(fileName);
+        Integer id = add(fileName);
         parseQuestion(id,bytes);
-        return R.ok(id);
+        return R.ok();
+    }
+
+    @Override
+    public R getList() {
+        UserDto user = UserHolder.getUser();
+        List<Test> list = lambdaQuery().eq(Test::getAuthorId, user.getId()).orderByDesc(Test::getCreateTime).list();
+        return R.ok(list);
     }
 
 
-      public  void parseQuestion(String id, byte[] bytes) throws IOException {
+    public  void parseQuestion(Integer id, byte[] bytes) throws IOException {
           XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(bytes));
-          List<XWPFParagraph> paragraphs =
-                  document.getParagraphs();
+          List<XWPFParagraph> paragraphs = document.getParagraphs();
           Question question = null;
           int typeId = 0;
           int n=1;
+          int courseId=2;
           for (XWPFParagraph paragraph : paragraphs) {
               String text = paragraph.getText();
               text=text.trim();
-              if (text!= ""||text.length() > 2) {
+              if (text!=""||text.length() > 2) {
                   String s ;
                   if (n<10)
                       s=text.substring(0,1);
                   else
                       s=text.substring(0,2);
+                  if (COURSE_CACHE.containsKey(text))
+                      courseId=COURSE_CACHE.get(text);
                   if (text.contains("选择题"))
-                      typeId = QuestionType.CHOICE.ordinal();
+                      typeId = Type.SELECT.getKey();
                   else if (text.contains("判断题"))
-                      typeId = QuestionType.JUDGMENT.ordinal();
+                      typeId = Type.JUDGE.getKey();
                   else if(text.contains("填空题"))
-                      typeId=QuestionType.FILLING.ordinal();
+                      typeId=Type.FILLING.getKey();
                   else if (text.contains("综合题"))
-                      typeId=QuestionType.COMPUTE.ordinal();
+                      typeId=Type.COMPREHENSIVE.getKey();
                   else if (sortMap.containsKey(s)) {
                       question = new Question();
+                      question.setCourseId(courseId);
                       question.setTestId(id);
                       question.setSort(sortMap.get(s));
                       question.setTypeId(typeId);
-                      if (typeId == QuestionType.CHOICE.ordinal() || typeId == QuestionType.JUDGMENT.ordinal()) {
-                          int end = text.indexOf(")");
+                      if (typeId == Type.SELECT.getKey() ||typeId==Type.JUDGE.getKey()) {
+                          int end =-1;
+                          end = text.indexOf(")");
+                          if (end==-1) test.indexOf("）");
                           char c = text.charAt(end - 1);
                           question.setResult(String.valueOf(c));
                           String s1 = text.substring(0, end - 1);
@@ -146,52 +155,61 @@ public class TestServiceImpl extends ServiceImpl<TestMapper, Test> implements IT
                           String content = s1 + s2;
                           question.setContent(content);
                       } else {
+                          if (typeId==Type.FILLING.getKey()) question.setGrade(Type.FILLING.getGrade());
+                          else question.setGrade(Type.COMPREHENSIVE.getGrade());
                           question.setContent(text);
                           questionMapper.insert(question);
                           n++;
                       }
-                  } else if (typeId == QuestionType.CHOICE.ordinal()) {
-                      if (text.startsWith("A"))
-                          question.setOptiona(text);
-                      else if (text.startsWith("B"))
-                          question.setOptionb(text);
-                      else if (text.startsWith("C"))
-                          question.setOptionc(text);
-                      else if (text.startsWith("D")) {
-                          question.setOptiond(text);
-                          questionMapper.insert(question);
-                          n++;
-                      }
-                  } else if (typeId == QuestionType.JUDGMENT.ordinal()) {
-                      if (text.startsWith("A"))
-                          question.setOptiona(text);
-                      else if (text.startsWith("B")) {
-                          question.setOptionb(text);
-                          questionMapper.insert(question);
-                          n++;
+                  } else {
+                      char c = text.charAt(0);
+                      if (typeId == Type.SELECT.getKey()) {
+                          switch (c) {
+                              case 'A'-> question.setOptiona(text);
+                              case 'B'-> question.setOptionb(text);
+                              case 'C'-> question.setOptionc(text);
+                              case 'D'-> {
+                                  question.setOptiond(text);
+                                  question.setGrade(Type.SELECT.getGrade());
+                                  questionMapper.insert(question);
+                                  n++;
+                              }
+                              default -> {}
+                          }
+                      } else {
+                          if (text.startsWith("A"))
+                              question.setOptiona(text);
+                          else if (text.startsWith("B")){
+                              question.setOptionb(text);
+                              question.setGrade(Type.JUDGE.getGrade());
+                              questionMapper.insert(question);
+                              n++;
+                          }
                       }
                   }
               }
           }
-      }
+  }
 
 
 
-
-
-
-    public String add(String fileName) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(server).append("/").append(test).append("/").append(fileName);
-        String s = builder.toString();
+    public Integer add(String fileName) {
+        String s = appendUrl(fileName);
         Test test = new Test();
-        String uuId = UUID.randomUUID().toString(true);
-        test.setId(uuId);
+        String name = "测试_" + RandomUtil.randomNumbers(6);
+        test.setName(name);
         UserDto user = UserHolder.getUser();
         test.setAuthorId(user.getId());
         test.setAuthorName(user.getName());
         test.setUrl(s);
         save(test);
-        return uuId;
+        return test.getId();
+    }
+
+
+    private String appendUrl(String fileName) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(server).append("/").append(test).append("/").append(fileName);
+        return builder.toString();
     }
 }

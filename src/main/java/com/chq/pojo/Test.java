@@ -26,12 +26,16 @@ public class Test implements Serializable {
     private static final long serialVersionUID = 1L;
 
 
-    private String id;
+    @TableId(value = "id",type = IdType.AUTO)
+    private Integer id;
 
     /**
      * 作者id
      */
     private Integer authorId;
+
+
+    private String name;
 
     /**
      * 作者名字

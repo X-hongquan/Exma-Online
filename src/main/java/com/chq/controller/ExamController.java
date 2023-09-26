@@ -48,7 +48,7 @@ public class ExamController {
     }
 
     @DeleteMapping
-    public R del(Integer examId) throws AuthException {
+    public R del(Integer examId)  {
         return examService.del(examId);
     }
 
