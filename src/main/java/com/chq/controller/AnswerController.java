@@ -42,7 +42,7 @@ public class AnswerController {
     }
 
     @GetMapping
-    public R get(Integer examId,Integer userId) {
+    public R handleGet(Integer examId,Integer userId) {
         return answerService.get(examId,userId);
     }
 

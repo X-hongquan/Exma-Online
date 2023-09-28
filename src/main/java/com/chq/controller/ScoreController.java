@@ -34,7 +34,7 @@ public class ScoreController {
     private IScoreService scoreService;
 
     @PostMapping
-    public R add(@RequestBody Score score) {
+    public R handleAdd(@RequestBody Score score) {
         return scoreService.add(score);
     }
 
@@ -44,7 +44,7 @@ public class ScoreController {
     }
 
     @GetMapping("/download")
-    public void download(Integer examId,HttpServletResponse response) throws IOException {
+    public void handleDownload(Integer examId,HttpServletResponse response) throws IOException {
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("UTF-8");
         String fileName = URLEncoder.encode("班级", "UTF-8");

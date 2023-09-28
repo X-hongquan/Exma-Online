@@ -51,17 +51,17 @@ public class UserController {
     }
 
     @PostMapping
-    private R add(@RequestBody User user) {
+    public R add(@RequestBody User user) {
         return userService.add(user);
     }
 
     @DeleteMapping
-    private R del(Integer id) {
+    public R del(Integer id) {
         return userService.del(id);
     }
 
     @PutMapping
-    private R up(@Validated @RequestBody User user) {
+    public R up(@Validated @RequestBody User user) {
         return userService.up(user);
     }
 
@@ -72,7 +72,7 @@ public class UserController {
 
 
     @PostMapping("/rLogin")
-    private R adminLogin(@Validated @RequestBody LoginDto loginDto) {
+    public R adminLogin(@Validated @RequestBody LoginDto loginDto) {
         return userService.adminLogin(loginDto);
     }
 
@@ -109,12 +109,12 @@ public class UserController {
     }
 
     @PutMapping("/pwd")
-    public R updatePwd(@Validated @RequestBody PasswordDto passwordDto)  {
+    public R handleUpdatePwd(@Validated @RequestBody PasswordDto passwordDto)  {
         return userService.updatePwd(passwordDto);
     }
 
     @GetMapping("/code")
-    public R sendCode() {
+    public R handleSendCode() {
         return userService.sendCode();
     }
 

@@ -16,4 +16,5 @@ public class UserDto implements Serializable {
     private LocalDate bornDate;
     private String email;
     private Integer positionId;
+    private Integer status;
 }

@@ -4,7 +4,9 @@ import com.chq.common.R;
 import com.chq.pojo.Choice;
 import com.chq.pojo.Question;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -22,4 +24,6 @@ public interface IQuestionService extends IService<Question> {
     R<String> getResult(Integer testId);
 
     R<List<Question>> getAll(Choice choice);
+
+    R excelAdd(MultipartFile file) throws IOException;
 }

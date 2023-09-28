@@ -36,7 +36,7 @@ public class TestController {
 
 
     @PostMapping("/upload")
-    public R upload(@RequestParam("file")MultipartFile file) throws IOException {
+    public R handleUpload(@RequestParam("file")MultipartFile file) throws IOException {
         byte[] bytes = file.getBytes();
         String contentType = file.getContentType();
         String originalFilename = file.getOriginalFilename();
@@ -50,12 +50,12 @@ public class TestController {
 
 
     @DeleteMapping
-    public R del(Integer id) {
+    public R handleDel(Integer id) {
         return testService.del(id);
     }
 
     @PutMapping("/name")
-    public R updateName(@RequestBody Test test) {
+    public R handleUpdateName(@RequestBody Test test) {
         return testService.updateName(test);
     }
 

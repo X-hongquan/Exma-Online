@@ -35,11 +35,11 @@ public class Question implements Serializable {
     @ExcelIgnore
     private Integer testId;
 
-    @ExcelProperty("科目ID,计算机组成原理填2")
+    @ExcelProperty("计算机组成原理填2")
     private Integer courseId;
 
     //1.easy,2.medium,3.difficult
-    @ExcelProperty("题目难度1-10")
+    @ExcelProperty("题目难度1-3")
     private Integer degree;
 
     //分值

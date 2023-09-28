@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -57,6 +58,11 @@ public class QuestionController {
         String fileName = URLEncoder.encode("题目", "UTF-8");
         response.setHeader("Content-disposition", "attachment;filename=" + fileName+".xlsx");
         EasyExcel.write(response.getOutputStream(), Question.class).sheet("模板").doWrite(new ArrayList<Question>());
+    }
+
+    @PostMapping("/excel")
+    public R excelAdd(@RequestParam("file") MultipartFile file) throws IOException {
+        return questionService.excelAdd(file);
     }
 
 }

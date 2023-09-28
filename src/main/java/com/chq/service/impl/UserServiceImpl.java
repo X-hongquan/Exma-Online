@@ -174,6 +174,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         String token = UUID.randomUUID().toString(true);
         UserDto userDto = new UserDto();
         BeanUtils.copyProperties(one,userDto);
+        userDto.setStatus(2);
         stringRedisTemplate.opsForValue().set(LOGIN_KEY+token,JSONUtil.toJsonStr(userDto),ttl,TimeUnit.HOURS);
         return token;
     }
