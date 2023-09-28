@@ -4,15 +4,18 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.chq.common.R;
 import com.chq.controller.advice.exception.AuthException;
 import com.chq.mapper.AnswerMapper;
+import com.chq.mapper.ScoreMapper;
 import com.chq.mapper.UserMapper;
 import com.chq.pojo.Answer;
 import com.chq.pojo.Exam;
 import com.chq.mapper.ExamMapper;
+import com.chq.pojo.Score;
 import com.chq.pojo.dto.ExamDto;
 import com.chq.pojo.vo.ExamVo;
 import com.chq.pojo.dto.UserDto;
 import com.chq.service.IExamService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.chq.service.IScoreService;
 import com.chq.util.UserHolder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +49,11 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements IE
     @Autowired
     private AnswerMapper answerMapper;
 
+
+    @Autowired
+    private ScoreMapper scoreMapper;
+
+
     @Override
     public R add(ExamDto dto) {
         Exam exam = new Exam();
@@ -77,6 +85,9 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements IE
             BeanUtils.copyProperties(item, vo);
             vo.setClassName(CLASS_CACHE.get(item.getClassId()));
             vo.setName(userMapper.selectById(item.getUserId()).getName());
+            Score score = scoreMapper.selectOne(new LambdaQueryWrapper<Score>().eq(Score::getExamId, vo.getId()).eq(Score::getUserId, UserHolder.getUser().getId()));
+            if (score!=null)
+            vo.setScore(score.getOtherScore()+score.getSelectScore());
             return vo;
         }).collect(Collectors.toList());
         return collect;
@@ -88,6 +99,7 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements IE
         if ("学生".equals(POSITION_CACHE.get(user.getPositionId()))) {
             List<Exam> list = lambdaQuery().eq(Exam::getClassId, user.getClassId()).le(Exam::getEndTime, LocalDateTime.now()).list();
             List<ExamVo> examVo = toExamVo(list);
+
             return R.ok(examVo);
         }
         List<Exam> list = lambdaQuery().eq(Exam::getUserId, user.getId()).le(Exam::getEndTime, LocalDateTime.now()).list();

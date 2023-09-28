@@ -23,4 +23,5 @@ public interface IScoreService extends IService<Score> {
     R<List<ScoreVo>> listAll(Integer examId);
 
 
+    R<Integer> getScore(Integer examId);
 }

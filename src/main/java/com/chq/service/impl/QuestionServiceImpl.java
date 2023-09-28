@@ -70,7 +70,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         return R.ok();
     }
 
-    public String RadioList(Integer testId) {
+    private String RadioList(Integer testId) {
         List<Question> list = lambdaQuery().eq(Question::getTestId, testId).le(Question::getTypeId, Type.JUDGE.getKey()).orderByAsc(Question::getSort).list();
         StringBuilder builder = new StringBuilder();
         for (Question question : list) {

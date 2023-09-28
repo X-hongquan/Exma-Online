@@ -166,15 +166,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if (user==null) {
             throw new AuthException("账号或密码错误");
         }
-        String token = getToken(one,LOGIN_TTL);
+        String token = getToken(one,LOGIN_TTL,user.getStatus());
         return R.ok(token);
     }
 
-    private String getToken(User one,Long ttl) {
+    private String getToken(User one,Long ttl,Integer status) {
         String token = UUID.randomUUID().toString(true);
         UserDto userDto = new UserDto();
         BeanUtils.copyProperties(one,userDto);
-        userDto.setStatus(2);
+        userDto.setStatus(status);
         stringRedisTemplate.opsForValue().set(LOGIN_KEY+token,JSONUtil.toJsonStr(userDto),ttl,TimeUnit.HOURS);
         return token;
     }
@@ -251,7 +251,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     public R tour() {
         User user = getById(9);
-        String token = getToken(user,TOUR_TTL);
+        String token = getToken(user,TOUR_TTL,2);
         return R.ok(token);
     }
 

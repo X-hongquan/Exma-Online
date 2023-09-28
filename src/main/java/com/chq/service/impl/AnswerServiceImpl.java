@@ -87,7 +87,6 @@ public class AnswerServiceImpl extends ServiceImpl<AnswerMapper, Answer> impleme
 
     @Override
     public R add(AnswerDto answer) {
-
         Integer examId = answer.getExamId();
         LocalDateTime now = LocalDateTime.now();
         boolean after = now.isAfter(examMapper.selectById(answer.getExamId()).getEndTime());
@@ -143,15 +142,9 @@ public class AnswerServiceImpl extends ServiceImpl<AnswerMapper, Answer> impleme
                 .orderByAsc(Question::getSort));
         for (Question question : questions) {
             String result = question.getResult();
-            if (question.getTypeId()==Type.SELECT.getKey()) {
-                char c = charArray[i++];
-                if (question.getResult().equals(String.valueOf(c)))
-                    radioScore+=3;
-            } else{
-                char c = charArray[i++];
-                if (question.getResult().equals(String.valueOf(c)))
-                    radioScore+=2;
-            }
+            char c = charArray[i++];
+            if (result.equals(String.valueOf(c)))
+                    radioScore+=question.getGrade();
         }
         return R.ok(byId,Long.valueOf(radioScore));
     }
