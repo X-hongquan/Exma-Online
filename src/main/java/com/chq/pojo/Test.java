@@ -37,6 +37,13 @@ public class Test implements Serializable {
 
     private String name;
 
+    private Integer degree;
+
+    private Integer courseId;
+
+
+    private Integer sum;
+
     /**
      * 作者名字
      */

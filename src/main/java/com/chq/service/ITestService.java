@@ -3,6 +3,7 @@ package com.chq.service;
 import com.chq.common.R;
 import com.chq.pojo.Test;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.chq.pojo.dto.TestDto;
 import io.minio.errors.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,4 +27,10 @@ public interface ITestService extends IService<Test> {
     R upload(byte[] bytes, String contentType, String originalFilename) throws IOException;
 
     R getList();
+
+    R del(Integer id);
+
+    R updateName(Test test);
+
+    R handleAdd(TestDto testDto);
 }

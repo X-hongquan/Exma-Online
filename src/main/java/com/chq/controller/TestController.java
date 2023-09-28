@@ -3,6 +3,8 @@ package com.chq.controller;
 
 import cn.hutool.crypto.digest.DigestUtil;
 import com.chq.common.R;
+import com.chq.pojo.Test;
+import com.chq.pojo.dto.TestDto;
 import com.chq.service.ITestService;
 import io.minio.PutObjectArgs;
 import io.minio.errors.*;
@@ -44,6 +46,22 @@ public class TestController {
     @GetMapping("/list/id")
     public R list() {
         return testService.getList();
+    }
+
+
+    @DeleteMapping
+    public R del(Integer id) {
+        return testService.del(id);
+    }
+
+    @PutMapping("/name")
+    public R updateName(@RequestBody Test test) {
+        return testService.updateName(test);
+    }
+
+    @PostMapping
+    public R handleAdd(@RequestBody TestDto testDto) {
+        return testService.handleAdd(testDto);
     }
 }
 

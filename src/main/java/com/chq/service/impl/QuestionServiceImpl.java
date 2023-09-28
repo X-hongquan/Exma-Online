@@ -1,7 +1,10 @@
 package com.chq.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chq.common.R;
 import com.chq.common.Type;
+import com.chq.pojo.Choice;
 import com.chq.pojo.Question;
 import com.chq.mapper.QuestionMapper;
 import com.chq.service.IQuestionService;
@@ -32,6 +35,17 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
     public R<String> getResult(Integer testId) {
         String s = RadioList(testId);
         return R.ok(s);
+    }
+
+    @Override
+    public R<List<Question>> getAll(Choice choice) {
+
+        Page<Question> page = new Page<>(Long.valueOf(choice.getConcurrentPage()), 10);
+        LambdaQueryWrapper<Question> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(Question::getCourseId,choice.getCourseId()).eq(Question::getDegree,choice.getDegree()).eq(Question::getTypeId,choice.getTypeId());
+        Page<Question> page1 = page(page,lqw);
+        List<Question> records = page1.getRecords();
+        return R.ok(records,page1.getTotal());
     }
 
     public String RadioList(Integer testId) {
