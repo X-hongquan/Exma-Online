@@ -55,4 +55,9 @@ public class ScoreController {
         EasyExcel.write(response.getOutputStream(), ScoreVo.class).sheet("模板").doWrite(list);
 
     }
+
+    @GetMapping
+    public R<Integer> getScore(Integer examId) {
+        return scoreService.getScore(examId);
+    }
 }

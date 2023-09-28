@@ -1,6 +1,7 @@
 package com.chq.service.impl;
 
 import com.alibaba.excel.EasyExcel;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.chq.common.R;
 
 import com.chq.mapper.ExamMapper;
@@ -14,6 +15,7 @@ import com.chq.pojo.vo.ScoreVo;
 import com.chq.service.IScoreService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import com.chq.util.UserHolder;
 import jakarta.annotation.Resource;
 
 import org.springframework.stereotype.Service;
@@ -70,6 +72,14 @@ public class ScoreServiceImpl extends ServiceImpl<ScoreMapper, Score> implements
             return scoreVo;
         }).collect(Collectors.toList());
         return R.ok(collect);
+    }
+
+    @Override
+    public R<Integer> getScore(Integer examId) {
+        LambdaQueryWrapper<Score> lqw = new LambdaQueryWrapper<Score>().eq(Score::getUserId, UserHolder.getUser()).eq(Score::getExamId, examId);
+        Score score = getOne(lqw);
+        if (score==null) return R.ok();
+        return R.ok(score.getOtherScore()+score.getSelectScore());
     }
 
 

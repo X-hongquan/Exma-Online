@@ -34,6 +34,8 @@ public class ExamVo {
 
     private String name;
 
+    private Integer score;
+
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 }

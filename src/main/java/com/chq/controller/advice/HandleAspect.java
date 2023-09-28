@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
-public class handleAspect {
+public class HandleAspect {
 
     //方法修饰？ 返回值类型 类路径.方法名(..)参数任意
     @Pointcut("execution(* com.chq.controller.*.handle*(..))")
@@ -23,7 +23,7 @@ public class handleAspect {
     public R around(ProceedingJoinPoint joinPoint) throws Throwable {
         UserDto user = UserHolder.getUser();
         if (user.getStatus()==2) throw new AuthException("游客模式,有限制");
-        else if (user.getStatus()==1) {
+        else if (user.getStatus()==0) {
             throw new AuthException("账号异常");
         }
         return (R)joinPoint.proceed();
