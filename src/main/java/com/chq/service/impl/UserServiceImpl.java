@@ -30,8 +30,10 @@ import io.minio.GetObjectResponse;
 import io.minio.MinioClient;
 import jakarta.annotation.Resource;
 import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -265,5 +267,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public R andLogin(String token) {
+        if (StringUtils.isBlank(token)) return R.fail("未登录");
+        String s = stringRedisTemplate.opsForValue().get(LOGIN_KEY+token);
+        if (StringUtils.isBlank(s)) return R.fail("未登录");
+        return R.ok();
+
     }
 }

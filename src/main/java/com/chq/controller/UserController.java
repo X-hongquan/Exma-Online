@@ -81,6 +81,12 @@ public class UserController {
          return userService.getMe();
     }
 
+    @GetMapping("/isLogin")
+    public R andLogin(HttpServletRequest request) {
+        String token = request.getHeader("authorization");
+        return userService.andLogin(token);
+    }
+
     @PostMapping("/login")
     public R login(@Validated @RequestBody LoginDto loginDto) {
         return userService.login(loginDto);
@@ -95,7 +101,7 @@ public class UserController {
     @GetMapping("/logout")
     public R logout(HttpServletRequest request) {
         String token = request.getHeader("authorization");
-      return userService.logout(token);
+        return userService.logout(token);
     }
 
     @GetMapping("/class")

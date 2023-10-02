@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 /**
  * <p>
@@ -26,7 +27,7 @@ public interface ITestService extends IService<Test> {
 
     R upload(byte[] bytes, String contentType, String originalFilename) throws IOException;
 
-    R getList();
+    R<List<Test>> getList();
 
     R del(Integer id);
 

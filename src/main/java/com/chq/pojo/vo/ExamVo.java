@@ -18,9 +18,7 @@ public class ExamVo {
 
     private String testId;
 
-
     private LocalDateTime beginTime;
-
 
     private LocalDateTime endTime;
 

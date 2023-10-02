@@ -28,19 +28,14 @@ public class Test implements Serializable {
 
     @TableId(value = "id",type = IdType.AUTO)
     private Integer id;
-
     /**
      * 作者id
      */
     private Integer authorId;
 
-
     private String name;
-
     private Integer degree;
-
     private Integer courseId;
-
 
     private Integer sum;
 

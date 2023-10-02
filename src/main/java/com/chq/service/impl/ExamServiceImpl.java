@@ -66,7 +66,7 @@ public class ExamServiceImpl extends ServiceImpl<ExamMapper, Exam> implements IE
     }
 
     @Override
-    public R getDoing() {
+    public R<List<ExamVo>> getDoing() {
         UserDto user = UserHolder.getUser();
         if ("学生".equals(POSITION_CACHE.get(user.getPositionId()))) {
             List<Exam> list = lambdaQuery().eq(Exam::getClassId, user.getClassId()).ge(Exam::getEndTime, LocalDateTime.now()).list();

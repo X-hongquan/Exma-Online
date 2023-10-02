@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 /**
  * <p>
@@ -44,7 +45,7 @@ public class TestController {
     }
 
     @GetMapping("/list/id")
-    public R list() {
+    public R<List<Test>> list() {
         return testService.getList();
     }
 

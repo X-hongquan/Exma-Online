@@ -107,7 +107,7 @@ public class TestServiceImpl extends ServiceImpl<TestMapper, Test> implements IT
     }
 
     @Override
-    public R getList() {
+    public R<List<Test>> getList() {
         UserDto user = UserHolder.getUser();
         List<Test> list = lambdaQuery().eq(Test::getAuthorId, user.getId()).orderByDesc(Test::getCreateTime).list();
         return R.ok(list);
