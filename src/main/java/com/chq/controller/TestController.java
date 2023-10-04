@@ -3,6 +3,7 @@ package com.chq.controller;
 
 import cn.hutool.crypto.digest.DigestUtil;
 import com.chq.common.R;
+import com.chq.common.Role;
 import com.chq.pojo.Test;
 import com.chq.pojo.dto.TestDto;
 import com.chq.service.ITestService;
@@ -61,6 +62,7 @@ public class TestController {
     }
 
     @PostMapping
+    @Role
     public R handleAdd(@RequestBody TestDto testDto) {
         return testService.handleAdd(testDto);
     }

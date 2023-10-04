@@ -2,6 +2,7 @@ package com.chq.controller;
 
 
 import com.chq.common.R;
+import com.chq.common.Role;
 import com.chq.controller.advice.exception.AuthException;
 import com.chq.pojo.Exam;
 import com.chq.pojo.dto.ExamDto;
@@ -33,6 +34,7 @@ public class ExamController {
     }
 
     @PostMapping
+    @Role
     public R add(@RequestBody ExamDto dto) {
         return examService.add(dto);
     }
@@ -48,6 +50,7 @@ public class ExamController {
     }
 
     @DeleteMapping
+    @Role
     public R del(Integer examId)  {
         return examService.del(examId);
     }

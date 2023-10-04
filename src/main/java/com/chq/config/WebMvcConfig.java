@@ -1,6 +1,7 @@
 package com.chq.config;
 
 
+import com.chq.controller.interceptor.AuthInterceptor;
 import com.chq.controller.interceptor.LoginInterceptor;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +24,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LoginInterceptor(stringRedisTemplate))
                 .addPathPatterns("/**")
-                .excludePathPatterns("/user/rLogin","/user/login","/user/use","/user/tour","/user/isLogin","/user/download","/question/download");
+                .excludePathPatterns("/user/rLogin","/user/login","/user/use","/user/tour","/user/isLogin","/user/download","/question/download").order(1);
+        registry.addInterceptor(new AuthInterceptor())
+                .addPathPatterns("/**")
+                .excludePathPatterns("/user/rLogin","/user/login","/user/use","/user/tour","/user/isLogin","/user/download","/question/download").order(2);
     }
 
 }
