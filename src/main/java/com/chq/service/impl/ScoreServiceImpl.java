@@ -15,7 +15,6 @@ import com.chq.pojo.vo.ScoreVo;
 import com.chq.service.IScoreService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
-import com.chq.util.UserHolder;
 import jakarta.annotation.Resource;
 
 import org.springframework.stereotype.Service;
@@ -42,11 +41,11 @@ public class ScoreServiceImpl extends ServiceImpl<ScoreMapper, Score> implements
     @Resource
     private UserMapper userMapper;
 
-
-
-
     @Resource
     private ExamMapper examMapper;
+
+
+
 
 
 
@@ -74,14 +73,6 @@ public class ScoreServiceImpl extends ServiceImpl<ScoreMapper, Score> implements
         return R.ok(collect);
     }
 
-    @Override
-    public R<Integer> getScore(Integer examId) {
-        Integer userId = UserHolder.getUser().getId();
-        LambdaQueryWrapper<Score> lqw = new LambdaQueryWrapper<Score>().eq(Score::getUserId, userId).eq(Score::getExamId, examId);
-        Score score = getOne(lqw);
-        if (score==null) return R.ok();
-        return R.ok(score.getOtherScore()+score.getSelectScore());
-    }
 
 
 }

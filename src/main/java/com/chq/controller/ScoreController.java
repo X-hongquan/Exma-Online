@@ -56,8 +56,5 @@ public class ScoreController {
 
     }
 
-    @GetMapping
-    public R<Integer> getScore(Integer examId) {
-        return scoreService.getScore(examId);
-    }
+
 }
