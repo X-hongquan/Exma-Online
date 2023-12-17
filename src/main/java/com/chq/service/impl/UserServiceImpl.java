@@ -2,6 +2,7 @@ package com.chq.service.impl;
 
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.excel.EasyExcel;
@@ -24,7 +25,10 @@ import com.chq.pojo.vo.UserVo;
 import com.chq.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chq.util.Sender;
+import com.chq.util.SenderContext;
 import com.chq.util.UserHolder;
+import com.chq.util.impl.QQEmailSender;
+import com.chq.util.impl.SendSms;
 import io.minio.GetObjectArgs;
 import io.minio.GetObjectResponse;
 import io.minio.MinioClient;
@@ -76,8 +80,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
    private MinioClient minioClient;
 
    @Autowired
-   @Qualifier(value = "qq")
-   private Sender sender;
+   private SenderContext senderContext;
+
+
 
     @Override
     public R add(User user) {
@@ -242,13 +247,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     public R sendCode() {
         UserDto user = UserHolder.getUser();
-        String email = user.getEmail().trim();
-        if (email==null||email=="") return R.fail("未注册邮箱,请联系管理员");
+        String email = user.getEmail();
         String code = RandomUtil.randomString(6);
         stringRedisTemplate.opsForValue().set(AUTH_CODE+user.getId(),code,CODE_TTL, TimeUnit.MINUTES);
-        if (sender.sendAuthCode(new MsgDto(email, "密码修改", code))) {
+        if (StrUtil.isNotBlank(email)) {
+            senderContext.strategySend(new QQEmailSender(),new MsgDto(email,"密码修改",code));
             return R.ok();
         }
+//       senderContext.strategySend(new SendSms(),new MsgDto(user.getPhone(),"密码修改",code));
         return R.fail("服务器异常");
     }
 
