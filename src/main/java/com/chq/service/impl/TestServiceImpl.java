@@ -87,7 +87,6 @@ public class TestServiceImpl extends ServiceImpl<TestMapper, Test> implements IT
     }
 
     @Override
-    @Transactional
     public R upload(byte[] bytes, String contentType, String originalFilename) throws IOException {
         String s = DigestUtil.md5Hex(bytes);
         String tail = originalFilename.substring(originalFilename.lastIndexOf("."));
@@ -133,7 +132,6 @@ public class TestServiceImpl extends ServiceImpl<TestMapper, Test> implements IT
     @Override
     @Transactional
     public R handleAdd(TestDto testDto) {
-
         UserDto user = UserHolder.getUser();
         Integer userId = user.getId();
         if (getOne(new LambdaQueryWrapper<Test>().eq(Test::getName,testDto.getName()))!=null) return R.fail("名称已经存在");

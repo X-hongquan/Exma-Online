@@ -74,13 +74,7 @@ public class ScoreServiceImpl extends ServiceImpl<ScoreMapper, Score> implements
         return R.ok(collect);
     }
 
-    @Override
-    public R<Integer> getScore(Integer examId) {
-        LambdaQueryWrapper<Score> lqw = new LambdaQueryWrapper<Score>().eq(Score::getUserId, UserHolder.getUser()).eq(Score::getExamId, examId);
-        Score score = getOne(lqw);
-        if (score==null) return R.ok();
-        return R.ok(score.getOtherScore()+score.getSelectScore());
-    }
+
 
 
 

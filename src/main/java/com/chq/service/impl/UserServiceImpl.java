@@ -91,6 +91,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
+    public R excelAdd(MultipartFile file) throws IOException {
+        EasyExcel.read(file.getInputStream(), UserEo.class, new PageReadListener<UserEo>(dataList -> {
+            for (UserEo eo: dataList) {
+                log.info("对象,{}",eo);
+                User user = new User();
+                BeanUtils.copyProperties(eo,user);
+                String salt = RandomUtil.randomString(4);
+                user.setSalt(salt);
+                String pwd=DigestUtil.md5Hex("123456"+salt);
+                user.setPassword(pwd);
+                save(user);
+            }
+        })).sheet().doRead();
+        return R.ok();
+    }
+
+    @Override
     public R del(Integer id) {
         removeById(id);
         return R.ok();
@@ -207,22 +224,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     }
 
-    @Override
-    public R excelAdd(MultipartFile file) throws IOException {
-        EasyExcel.read(file.getInputStream(), UserEo.class, new PageReadListener<UserEo>(dataList -> {
-            for (UserEo eo: dataList) {
-                log.info("对象,{}",eo);
-                User user = new User();
-                BeanUtils.copyProperties(eo,user);
-                String salt = RandomUtil.randomString(4);
-                user.setSalt(salt);
-                String pwd=DigestUtil.md5Hex("123456"+salt);
-                user.setPassword(pwd);
-                save(user);
-            }
-        })).sheet().doRead();
-        return R.ok();
-    }
+
 
     @Override
     public R updatePwd(PasswordDto passwordDto) {

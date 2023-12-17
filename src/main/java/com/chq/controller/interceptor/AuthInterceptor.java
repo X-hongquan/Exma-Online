@@ -10,7 +10,8 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.lang.reflect.Method;
-
+import java.lang.reflect.Parameter;
+import java.util.Arrays;
 
 
 public class AuthInterceptor implements HandlerInterceptor {
