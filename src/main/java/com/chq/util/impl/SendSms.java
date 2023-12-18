@@ -1,7 +1,7 @@
 package com.chq.util.impl;// This file is auto-generated, don't edit it. Thanks.
 
 
-import cn.hutool.core.util.RandomUtil;
+
 import com.aliyun.auth.credentials.Credential;
 import com.aliyun.auth.credentials.provider.StaticCredentialProvider;
 
